@@ -88,8 +88,8 @@ npm run format       # Format code and imports
 ## OpenAPI
 
 ```
-http://localhost:4000/api-doc (API documentation)
-http://localhost:4000/api-spec (OpenAPI spec json)
+http://localhost:4000/doc (API documentation)
+http://localhost:4000/spec (OpenAPI spec json)
 ```
 
 ## Architecture

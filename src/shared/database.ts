@@ -1,7 +1,7 @@
 import { Pool, type PoolConfig } from 'pg'
 import { settings } from '../settings'
 import { ServerException } from './exceptions'
-import { logger } from './logger'
+import { logger } from './logging'
 
 let pool: Pool | null = null
 
@@ -32,14 +32,6 @@ function createPool(config: typeof settings.database): Pool {
 
   const newPool = new Pool(poolConfig)
 
-  newPool.on('acquire', () => {
-    logger.info('[database] pool acquired')
-  })
-
-  newPool.on('remove', () => {
-    logger.info('[database] pool released')
-  })
-
   newPool.on('error', (err) => {
     logger.error({ error: err }, '[database] pool error')
   })
@@ -48,16 +40,19 @@ function createPool(config: typeof settings.database): Pool {
 }
 
 export async function startDatabase(): Promise<Pool> {
+  const config = getConfig()
+  logger.info(
+    `[database] connection pool initialized: ${config.host}:${config.port}/${config.name}`
+  )
+
   if (pool) {
     return pool
   }
 
   try {
-    const config = getConfig()
     pool = createPool(config)
 
     await pool.query('SELECT 1')
-    logger.info('[database] connection pool initialized')
 
     return pool
   } catch (error) {
@@ -82,10 +77,14 @@ export function getPool(): Pool {
 }
 
 export async function stopDatabase(): Promise<void> {
+  const config = getConfig()
+
   if (pool) {
     try {
       await pool.end()
-      logger.info('[database] connection pool terminated')
+      logger.info(
+        `[database] connection pool terminated: ${config.host}:${config.port}/${config.name}`
+      )
     } catch (error) {
       logger.error({ error }, '[database] error terminating connection pool')
     } finally {

@@ -18,19 +18,18 @@ export const settings = {
   openapi: {
     enabled: true,
     spec: {
-      path: '/api-spec',
+      path: '/spec',
       title: 'service-typescript-node-express',
-      description:
-        'API - Node.js, TypeScript, Express.js, zod, OpenAPI and PostgreSQL',
+      description: 'API - Node.js, TypeScript, Express.js, zod, OpenAPI and PostgreSQL',
       version: '1.0.0',
     },
     doc: {
-      path: '/api-doc',
+      path: '/doc',
     },
   },
+  debug: process.env['DEBUG'] === 'true',
   logging: {
-    enabled: process.env['NODE_ENV'] === 'development',
-    level: process.env['NODE_ENV'] === 'development' ? 'debug' : 'info',
+    level: process.env['LOGGING_LEVEL'] || 'info',
   },
   environment: {
     isDevelopment: process.env['NODE_ENV'] === 'development',
