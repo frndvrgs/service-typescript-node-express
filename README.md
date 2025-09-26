@@ -77,7 +77,7 @@ npm run format       # Format code
 ## Tech Stack
 
 - **Runtime**: Node.js 24
-- **Framework**: Express.js
+- **Framework**: Express.js v5
 - **Language**: TypeScript
 - **Database**: PostgreSQL
 - **API Documentation**: Swagger/OpenAPI
@@ -90,21 +90,25 @@ npm run format       # Format code
 ```
 src/
 ├── main.ts                 # Application entry point
+├── routes.ts               # HTTP routes
+├── settings.ts             # Settings
 ├── shared/
 │   ├── database.ts         # Database client
+│   ├── exceptions.ts       # Custom error classes
 │   ├── logger.ts           # Logging tools
-│   └── exceptions.ts       # Custom error classes
+│   ├── openapi.ts          # Open API definitions
+│   └── validation.ts       # Request validation middleware
 └── modules/
     ├── product/
-    │   ├── controller.ts   # HTTP routes
+    │   ├── controller.ts   # Controller logic
     │   ├── models.ts       # Model definitions
     │   ├── repository.ts   # Database operations
-    │   └── service.ts      # Business logic
+    │   └── services.ts     # Business logic
     └── cart/
-        └── controller.ts
+        ├── controller.ts
         ├── models.ts
         ├── repository.ts
-        └── service.ts
+        └── services.ts
 ```
 
 ### Custom Error Types
