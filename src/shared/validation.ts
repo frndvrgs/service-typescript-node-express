@@ -50,7 +50,7 @@ export const validate = <T extends ZodType>(target: ValidationTarget, schema: T)
             detail: `${target} validation failed`,
           }
         )
-        exception.sendResponse(res)
+        exception.getResponse(res)
         return
       }
       next(error)

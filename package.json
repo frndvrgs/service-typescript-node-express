@@ -5,6 +5,8 @@
     "dev": "NODE_ENV=development tsx watch src/main.ts",
     "build": "tsup",
     "start": "NODE_ENV=production node dist/main.js",
+    "test": "vitest run",
+    "test:watch": "vitest",
     "format": "biome check --linter-enabled=false --write .",
     "lint": "tsc && biome check .",
     "lint:fix": "tsc && biome check --write ."
@@ -16,6 +18,7 @@
     "cors": "^2.8.5",
     "dotenv": "^17.2.2",
     "express": "^5.1.0",
+    "helmet": "^8.1.0",
     "pg": "^8.16.3",
     "pino": "^9.11.0",
     "pino-pretty": "^13.1.1",
@@ -28,8 +31,10 @@
     "@types/express": "^5.0.3",
     "@types/node": "^24.5.2",
     "@types/pg": "^8.15.5",
+    "@vitest/coverage-v8": "^3.2.4",
     "tsup": "^8.5.0",
     "tsx": "^4.20.6",
-    "typescript": "^5.9.2"
+    "typescript": "^5.9.2",
+    "vitest": "^3.2.4"
   }
 }

@@ -1,5 +1,6 @@
-import type { Response } from 'express'
+import type { NextFunction, Request, Response } from 'express'
 import { settings } from '../settings'
+import { logger } from './logging'
 
 interface ErrorContext {
   operation?: string
@@ -25,7 +26,7 @@ abstract class BaseException extends Error {
     Error.captureStackTrace(this, this.constructor)
   }
 
-  abstract sendResponse(res: Response): void
+  abstract getResponse(res: Response): void
 }
 
 export class InterfaceException extends BaseException {
@@ -33,7 +34,7 @@ export class InterfaceException extends BaseException {
     super(message, status, code, context)
   }
 
-  sendResponse(res: Response) {
+  getResponse(res: Response) {
     res.status(this.status).json({
       success: false,
       error: {
@@ -52,7 +53,7 @@ export class AppException extends BaseException {
     super(message, status, code, context)
   }
 
-  sendResponse(res: Response) {
+  getResponse(res: Response) {
     res.status(this.status).json({
       success: false,
       error: {
@@ -71,7 +72,7 @@ export class ServerException extends BaseException {
     super(message, status, code, context)
   }
 
-  sendResponse(res: Response) {
+  getResponse(res: Response) {
     res.status(this.status).json({
       success: false,
       error: {
@@ -83,4 +84,24 @@ export class ServerException extends BaseException {
       },
     })
   }
+}
+
+export const errorHandler = (error: Error, _req: Request, res: Response, next: NextFunction) => {
+  if (res.headersSent) {
+    return next(error)
+  }
+
+  if (
+    error instanceof AppException ||
+    error instanceof InterfaceException ||
+    error instanceof ServerException
+  ) {
+    error.getResponse(res)
+    return
+  }
+
+  logger.error({ error }, 'unhandled error')
+
+  const serverError = new ServerException('internal server error', 500, 'INTERNAL_ERROR')
+  serverError.getResponse(res)
 }

@@ -7,7 +7,7 @@
   },
   "files": {
     "ignoreUnknown": false,
-    "includes": ["src/**/*"]
+    "includes": ["src/**/*", ".vitest/**/*"]
   },
   "formatter": {
     "enabled": true,

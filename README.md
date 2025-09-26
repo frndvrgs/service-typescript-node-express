@@ -40,6 +40,8 @@ API - Node.js, TypeScript, Express.js, zod, OpenAPI and PostgreSQL
 npm run dev          # Start development server
 npm run build        # Build for production
 npm run start        # Start production server
+npm run test         # Test source code once
+npm run test:watch   # Test and watch source code   
 npm run lint         # Run linter and type check
 npm run lint:fix     # Fix linting issues
 npm run format       # Format code and imports
@@ -79,6 +81,7 @@ npm run format       # Format code and imports
 - **Framework**: Express.js v5
 - **Language**: TypeScript
 - **Database**: PostgreSQL
+- **Testing**: vitest
 - **API Documentation**: OpenAPI + Scalar UI
 - **Validation**: zod
 - **Build**: tsup
