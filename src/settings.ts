@@ -17,10 +17,16 @@ export const settings = {
   },
   openapi: {
     enabled: true,
-    path: '/api-docs',
-    title: 'service-typescript-node-express',
-    description: 'service-typescript-node-express',
-    version: '1.0.0',
+    spec: {
+      path: '/openapi/spec',
+      title: 'service-typescript-node-express',
+      description:
+        'E-commerce API with shopping cart system built with Express.js, TypeScript, and PostgreSQL',
+      version: '3.0.0',
+    },
+    doc: {
+      path: '/openapi/doc',
+    },
   },
   logging: {
     enabled: process.env['NODE_ENV'] === 'development',

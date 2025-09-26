@@ -2,14 +2,12 @@ import cookieParser from 'cookie-parser'
 import cors from 'cors'
 import express from 'express'
 import pinoHttp from 'pino-http'
-import swaggerJSDoc from 'swagger-jsdoc'
-import swaggerUi from 'swagger-ui-express'
-import { cartRouter } from './modules/cart/controller'
-import { productRouter } from './modules/product/controller'
+import routes from './routes'
 import { settings } from './settings'
 import { startDatabase, stopDatabase } from './shared/database'
 import { AppException, InterfaceException, ServerException } from './shared/exceptions'
 import { logger } from './shared/logger'
+import { setupOpenAPI } from './shared/openapi'
 
 await startDatabase()
 
@@ -24,36 +22,9 @@ app.use(cookieParser())
 app.use(express.json())
 app.use(express.urlencoded({ extended: true }))
 
-const swaggerSpec = swaggerJSDoc({
-  definition: {
-    openapi: '3.0.0',
-    info: {
-      title: settings.openapi.title,
-      description: settings.openapi.description,
-      version: settings.openapi.version,
-    },
-    servers: [
-      {
-        url: `http://localhost:${settings.server.port}`,
-        description: settings.environment.nodeEnv,
-      },
-    ],
-  },
-  apis: ['./src/modules/**/*.ts'],
-})
+setupOpenAPI(app)
 
-if (settings.openapi.enabled) {
-  app.use(settings.openapi.path, swaggerUi.serve, swaggerUi.setup(swaggerSpec))
-}
-
-app.get('/', (_req, res) => {
-  res.json({
-    name: settings.server.name,
-  })
-})
-
-app.use('/products', productRouter)
-app.use('/carts', cartRouter)
+app.use(routes)
 
 app.use((_req, res) => {
   res.status(404).json({
@@ -91,7 +62,8 @@ app.use(
 const port = settings.server.port
 app.listen(port, () => {
   console.log('[http]', `server is running on port ${port} - ${settings.environment.nodeEnv}`)
-  console.log('[http]', `api documentation: http://localhost:${port}${settings.openapi.path}`)
+  console.log('[http]', `api documentation: http://localhost:${port}${settings.openapi.doc.path}`)
+  console.log('[http]', `openapi spec: http://localhost:${port}${settings.openapi.spec.path}`)
 })
 
 for (const sig of ['SIGINT', 'SIGTERM'] as const) {

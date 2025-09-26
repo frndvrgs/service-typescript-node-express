@@ -1,5 +1,5 @@
 import { Router } from 'express'
-import { validateParams } from '../../shared/validation'
+import { validate } from '../../shared/validation'
 import { Product } from './models'
 import { listProducts, readProduct } from './services'
 
@@ -14,7 +14,7 @@ productRouter.get('/', async (_req, res, next) => {
   }
 })
 
-productRouter.get('/:id', validateParams(Product.readParams), async (req, res, next) => {
+productRouter.get('/:id', validate('params', Product.readParams), async (req, res, next) => {
   try {
     const params = req.params as Product.readParams
     const item = await readProduct(params.id)
