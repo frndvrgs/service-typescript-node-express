@@ -18,14 +18,14 @@ export const settings = {
   openapi: {
     enabled: true,
     spec: {
-      path: '/openapi/spec',
+      path: '/api-spec',
       title: 'service-typescript-node-express',
       description:
-        'E-commerce API with shopping cart system built with Express.js, TypeScript, and PostgreSQL',
-      version: '3.0.0',
+        'API - Node.js, TypeScript, Express.js, zod, OpenAPI and PostgreSQL',
+      version: '1.0.0',
     },
     doc: {
-      path: '/openapi/doc',
+      path: '/api-doc',
     },
   },
   logging: {

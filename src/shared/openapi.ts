@@ -6,15 +6,11 @@ import { Product } from '../modules/product/models'
 import { settings } from '../settings'
 
 export function setupOpenAPI(app: Express) {
-  if (!settings.openapi.enabled) {
-    return
-  }
-
   const registry = new OpenAPIRegistry()
 
   registry.registerPath({
     method: 'get',
-    path: '/products',
+    path: '/api/products',
     summary: 'List all products',
     description: 'Retrieve a list of all available products in the system',
     tags: ['Products'],
@@ -32,7 +28,7 @@ export function setupOpenAPI(app: Express) {
 
   registry.registerPath({
     method: 'get',
-    path: '/products/{id}',
+    path: '/api/products/{id}',
     summary: 'Get product by ID',
     description: 'Retrieve detailed information about a specific product',
     tags: ['Products'],
@@ -56,7 +52,7 @@ export function setupOpenAPI(app: Express) {
 
   registry.registerPath({
     method: 'post',
-    path: '/carts',
+    path: '/api/carts',
     summary: 'Create new cart',
     description: 'Create a new shopping cart for a user session',
     tags: ['Carts'],
@@ -74,7 +70,7 @@ export function setupOpenAPI(app: Express) {
 
   registry.registerPath({
     method: 'get',
-    path: '/carts/{id}',
+    path: '/api/carts/{id}',
     summary: 'Get cart by ID',
     description: 'Retrieve cart details including items and totals',
     tags: ['Carts'],
@@ -98,7 +94,7 @@ export function setupOpenAPI(app: Express) {
 
   registry.registerPath({
     method: 'post',
-    path: '/carts/{id}/items',
+    path: '/api/carts/{id}/items',
     summary: 'Add item to cart',
     description: 'Add a product to the shopping cart with specified quantity',
     tags: ['Carts'],
@@ -132,7 +128,7 @@ export function setupOpenAPI(app: Express) {
 
   registry.registerPath({
     method: 'delete',
-    path: '/carts/{cartId}/items/{productId}',
+    path: '/api/carts/{cartId}/items/{productId}',
     summary: 'Remove item from cart',
     description: 'Remove a specific product from the shopping cart',
     tags: ['Carts'],
@@ -156,7 +152,7 @@ export function setupOpenAPI(app: Express) {
 
   registry.registerPath({
     method: 'patch',
-    path: '/carts/{cartId}/items/{productId}',
+    path: '/api/carts/{cartId}/items/{productId}',
     summary: 'Update item quantity in cart',
     description: 'Update the quantity of a specific item in the cart',
     tags: ['Carts'],
@@ -190,7 +186,7 @@ export function setupOpenAPI(app: Express) {
 
   registry.registerPath({
     method: 'post',
-    path: '/carts/{id}/coupons',
+    path: '/api/carts/{id}/coupons',
     summary: 'Apply coupon to cart',
     description: 'Apply a discount coupon to the shopping cart',
     tags: ['Carts'],
@@ -224,7 +220,7 @@ export function setupOpenAPI(app: Express) {
 
   registry.registerPath({
     method: 'get',
-    path: '/carts/{id}/operations',
+    path: '/api/carts/{id}/operations',
     summary: 'Get cart operations history',
     description: 'Retrieve the history of operations performed on the cart',
     tags: ['Carts'],
@@ -248,7 +244,7 @@ export function setupOpenAPI(app: Express) {
 
   const generator = new OpenApiGeneratorV3(registry.definitions)
   const document = generator.generateDocument({
-    openapi: '3.0.0',
+    openapi: '3.2.0',
     info: {
       version: settings.openapi.spec.version,
       title: settings.openapi.spec.title,

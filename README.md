@@ -1,6 +1,6 @@
 # service-typescript-node-express
 
-E-commerce API with shopping cart system built with Express.js, TypeScript, and PostgreSQL.
+API - Node.js, TypeScript, Express.js, zod, OpenAPI and PostgreSQL
 
 ## Setup
 
@@ -32,7 +32,6 @@ E-commerce API with shopping cart system built with Express.js, TypeScript, and 
 5. **Access the API**
    ```
    http://localhost:4000
-   http://localhost:4000/api-docs (API Documentation)
    ```
 
 ## Commands
@@ -43,7 +42,7 @@ npm run build        # Build for production
 npm run start        # Start production server
 npm run lint         # Run linter and type check
 npm run lint:fix     # Fix linting issues
-npm run format       # Format code
+npm run format       # Format code and imports
 ```
 
 ## API Endpoints
@@ -80,10 +79,18 @@ npm run format       # Format code
 - **Framework**: Express.js v5
 - **Language**: TypeScript
 - **Database**: PostgreSQL
-- **API Documentation**: Swagger/OpenAPI
+- **API Documentation**: OpenAPI + Scalar UI
+- **Validation**: zod
 - **Build**: tsup
 - **Linting**: Biome + TypeScript
 - **Logging**: Pino (development only)
+
+## OpenAPI
+
+```
+http://localhost:4000/api-doc (API documentation)
+http://localhost:4000/api-spec (OpenAPI spec json)
+```
 
 ## Architecture
 

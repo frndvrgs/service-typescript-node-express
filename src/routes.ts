@@ -14,7 +14,7 @@ routes.get('/', (_req, res) => {
   })
 })
 
-routes.use('/products', (await import('./modules/product/controller')).productRouter)
-routes.use('/carts', (await import('./modules/cart/controller')).cartRouter)
+routes.use('/api/products', (await import('./modules/product/controller')).productRouter)
+routes.use('/api/carts', (await import('./modules/cart/controller')).cartRouter)
 
 export default routes
