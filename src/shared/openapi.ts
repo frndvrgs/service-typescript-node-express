@@ -1,6 +1,7 @@
 import { OpenAPIRegistry, OpenApiGeneratorV3 } from '@asteasolutions/zod-to-openapi'
 import { apiReference } from '@scalar/express-api-reference'
 import type { Express } from 'express'
+import helmet from 'helmet'
 import { Cart } from '../modules/cart/models'
 import { Product } from '../modules/product/models'
 import { settings } from '../settings'
@@ -264,6 +265,25 @@ export function setupOpenAPI(app: Express) {
 
   app.use(
     settings.openapi.doc.path,
+    helmet({
+      contentSecurityPolicy: {
+        directives: {
+          'default-src': ["'self'"],
+          'script-src': ["'self'", "'unsafe-inline'", 'https://cdn.jsdelivr.net'],
+          'style-src': ["'self'", "'unsafe-inline'", 'https://fonts.googleapis.com'],
+          'font-src': ["'self'", 'https://fonts.gstatic.com', 'https://fonts.scalar.com'],
+          'img-src': ["'self'", 'data:', 'https:'],
+          'connect-src': ["'self'", 'https://cdn.jsdelivr.net'],
+          'object-src': ["'none'"],
+          'base-uri': ["'self'"],
+          'form-action': ["'self'"],
+          'frame-ancestors': ["'none'"],
+        },
+      },
+      crossOriginEmbedderPolicy: false,
+      frameguard: { action: 'deny' },
+      referrerPolicy: { policy: 'same-origin' },
+    }),
     apiReference({
       theme: 'saturn',
       layout: 'modern',

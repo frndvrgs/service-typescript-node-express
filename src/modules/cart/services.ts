@@ -7,7 +7,7 @@ export async function createCart(userId?: string) {
 
 export async function getCart(id: string) {
   if (!id || id.trim() === '') {
-    throw new AppException('cart id is required', 400, 'REQUIRED', {
+    throw new AppException('cart id is required', 'REQUIRED', 400, {
       operation: 'read',
       resource: 'cart',
       field: 'id',
@@ -16,7 +16,7 @@ export async function getCart(id: string) {
 
   const cart = await cartRepository.findCartById(id)
   if (!cart) {
-    throw new AppException('cart not found', 404, 'NOT_FOUND', {
+    throw new AppException('cart not found', 'NOT_FOUND', 404, {
       operation: 'read',
       resource: 'cart',
     })
@@ -26,21 +26,21 @@ export async function getCart(id: string) {
 
 export async function addProduct(cartId: string, productId: string, quantity: number) {
   if (!cartId || cartId.trim() === '') {
-    throw new AppException('cart id is required', 400, 'REQUIRED', {
+    throw new AppException('cart id is required', 'REQUIRED', 400, {
       operation: 'addProduct',
       resource: 'cart',
       field: 'id',
     })
   }
   if (!productId || productId.trim() === '') {
-    throw new AppException('product id is required', 400, 'REQUIRED', {
+    throw new AppException('product id is required', 'REQUIRED', 400, {
       operation: 'addProduct',
       resource: 'cart',
       field: 'id',
     })
   }
   if (!quantity || quantity <= 0) {
-    throw new AppException('quantity must be greater than 0', 400, 'REQUIRED', {
+    throw new AppException('quantity must be greater than 0', 'REQUIRED', 400, {
       operation: 'addProduct',
       resource: 'cart',
       field: 'quantity',
@@ -53,14 +53,14 @@ export async function addProduct(cartId: string, productId: string, quantity: nu
 
 export async function removeProduct(cartId: string, productId: string) {
   if (!cartId || cartId.trim() === '') {
-    throw new AppException('cart id is required', 400, 'REQUIRED', {
+    throw new AppException('cart id is required', 'REQUIRED', 400, {
       operation: 'removeProduct',
       resource: 'cart',
       field: 'id',
     })
   }
   if (!productId || productId.trim() === '') {
-    throw new AppException('product id is required', 400, 'REQUIRED', {
+    throw new AppException('product id is required', 'REQUIRED', 400, {
       operation: 'removeProduct',
       resource: 'cart',
       field: 'id',
@@ -73,21 +73,21 @@ export async function removeProduct(cartId: string, productId: string) {
 
 export async function updateQuantity(cartId: string, productId: string, quantity: number) {
   if (!cartId || cartId.trim() === '') {
-    throw new AppException('cart id is required', 400, 'REQUIRED', {
+    throw new AppException('cart id is required', 'REQUIRED', 400, {
       operation: 'updateQuantity',
       resource: 'cart',
       field: 'id',
     })
   }
   if (!productId || productId.trim() === '') {
-    throw new AppException('product id is required', 400, 'REQUIRED', {
+    throw new AppException('product id is required', 'REQUIRED', 400, {
       operation: 'updateQuantity',
       resource: 'cart',
       field: 'id',
     })
   }
   if (quantity < 0) {
-    throw new AppException('quantity cannot be negative', 400, 'REQUIRED', {
+    throw new AppException('quantity cannot be negative', 'REQUIRED', 400, {
       operation: 'updateQuantity',
       resource: 'cart',
       field: 'quantity',
@@ -100,14 +100,14 @@ export async function updateQuantity(cartId: string, productId: string, quantity
 
 export async function applyCoupon(cartId: string, couponCode: string) {
   if (!cartId || cartId.trim() === '') {
-    throw new AppException('cart id is required', 400, 'REQUIRED', {
+    throw new AppException('cart id is required', 'REQUIRED', 400, {
       operation: 'applyCoupon',
       resource: 'cart',
       field: 'id',
     })
   }
   if (!couponCode || couponCode.trim() === '') {
-    throw new AppException('coupon code is required', 400, 'REQUIRED', {
+    throw new AppException('coupon code is required', 'REQUIRED', 400, {
       operation: 'applyCoupon',
       resource: 'cart',
       field: 'id',
@@ -116,14 +116,14 @@ export async function applyCoupon(cartId: string, couponCode: string) {
 
   const cart = await cartRepository.findCartById(cartId)
   if (!cart)
-    throw new AppException('cart not found', 404, 'NOT_FOUND', {
+    throw new AppException('cart not found', 'NOT_FOUND', 404, {
       operation: 'applyCoupon',
       resource: 'cart',
     })
 
   const coupon = await cartRepository.findCouponByCode(couponCode)
   if (!coupon)
-    throw new AppException('invalid or expired coupon', 404, 'NOT_FOUND', {
+    throw new AppException('invalid or expired coupon', 'NOT_FOUND', 404, {
       operation: 'applyCoupon',
       resource: 'cart',
     })
@@ -131,7 +131,7 @@ export async function applyCoupon(cartId: string, couponCode: string) {
   const subtotalCents = Math.floor(cart.subtotal * 100)
 
   if (subtotalCents < coupon.minAmount * 100) {
-    throw new AppException(`minimum order amount is $${coupon.minAmount}`, 400, 'REQUIRED', {
+    throw new AppException(`minimum order amount is $${coupon.minAmount}`, 'REQUIRED', 400, {
       operation: 'applyCoupon',
       resource: 'cart',
       field: 'minAmount',
@@ -163,7 +163,7 @@ export async function applyCoupon(cartId: string, couponCode: string) {
 
 export async function getOperations(cartId: string) {
   if (!cartId || cartId.trim() === '') {
-    throw new AppException('cart id is required', 400, 'REQUIRED', {
+    throw new AppException('cart id is required', 'REQUIRED', 400, {
       operation: 'getOperations',
       resource: 'cart',
       field: 'id',

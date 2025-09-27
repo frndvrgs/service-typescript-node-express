@@ -2,7 +2,15 @@ import type { NextFunction, Request, Response } from 'express'
 import { settings } from '../settings'
 import { logger } from './logging'
 
-interface ErrorContext {
+interface Exception {
+  timestamp: string
+  type: string
+  message: string
+  code: string
+  context?: ExceptionContext
+  error?: { message: string; stack?: string }
+}
+interface ExceptionContext {
   operation?: string
   resource?: string
   field?: string
@@ -12,77 +20,98 @@ interface ErrorContext {
 abstract class BaseException extends Error {
   public readonly status: number
   public readonly code: string
-  public readonly context?: ErrorContext
+  public readonly context?: ExceptionContext
   public readonly timestamp: string
+  protected readonly type: string
+  protected readonly prefix: string
+  protected readonly exception: Exception
 
-  constructor(message: string, status: number, code: string, context?: ErrorContext) {
-    super(message)
+  constructor(
+    message: string,
+    status: number,
+    code: string,
+    context?: ExceptionContext,
+    error?: Error,
+    type: string = 'base_error',
+    prefix: string = '[exception]'
+  ) {
+    const timestamp = new Date().toISOString()
+    const errorMessage =
+      type === 'server_error' && !settings.environment.isDevelopment
+        ? 'internal server error'
+        : message
+
+    super(errorMessage)
     this.name = this.constructor.name
     this.status = status
     this.code = code
     this.context = context
-    this.timestamp = new Date().toISOString()
+    this.timestamp = timestamp
+    this.type = type
+    this.prefix = prefix
 
     Error.captureStackTrace(this, this.constructor)
+
+    this.exception = {
+      timestamp,
+      type,
+      message: errorMessage,
+      code,
+      ...(context && { context }),
+      ...(error && { error: { message: error.message, stack: error.stack } }),
+    }
+
+    logger.error({ error: this.exception }, prefix)
   }
 
-  abstract getResponse(res: Response): void
+  getResponse(res: Response): void {
+    res.status(this.status).json({
+      success: false,
+      error: settings.environment.isDevelopment
+        ? this.exception
+        : {
+            timestamp: this.timestamp,
+            type: this.type,
+            message: this.message,
+            code: this.code,
+          },
+    })
+  }
 }
 
 export class InterfaceException extends BaseException {
-  constructor(message: string, status = 400, code: string, context?: ErrorContext) {
-    super(message, status, code, context)
-  }
-
-  getResponse(res: Response) {
-    res.status(this.status).json({
-      success: false,
-      error: {
-        type: 'interface_error',
-        message: this.message,
-        code: this.code,
-        context: settings.environment.isDevelopment ? this.context : undefined,
-        timestamp: this.timestamp,
-      },
-    })
+  constructor(
+    message: string,
+    code: string,
+    status = 400,
+    context?: ExceptionContext,
+    error?: Error
+  ) {
+    super(message, status, code, context, error, 'interface_error', '[exception] interface')
   }
 }
 
 export class AppException extends BaseException {
-  constructor(message: string, status = 422, code: string, context?: ErrorContext) {
-    super(message, status, code, context)
-  }
-
-  getResponse(res: Response) {
-    res.status(this.status).json({
-      success: false,
-      error: {
-        type: 'application_error',
-        message: this.message,
-        code: this.code,
-        context: settings.environment.isDevelopment ? this.context : undefined,
-        timestamp: this.timestamp,
-      },
-    })
+  constructor(
+    message: string,
+    code: string,
+    status = 422,
+    context?: ExceptionContext,
+    error?: Error
+  ) {
+    super(message, status, code, context, error, 'application_error', '[exception] application')
   }
 }
 
 export class ServerException extends BaseException {
-  constructor(message: string, status = 500, code: string, context?: ErrorContext) {
-    super(message, status, code, context)
-  }
-
-  getResponse(res: Response) {
-    res.status(this.status).json({
-      success: false,
-      error: {
-        type: 'server_error',
-        message: settings.environment.isDevelopment ? this.message : 'internal server error',
-        code: this.code,
-        context: settings.environment.isDevelopment ? this.context : undefined,
-        timestamp: this.timestamp,
-      },
-    })
+  constructor(
+    message: string,
+    code: string,
+    status = 500,
+    context?: ExceptionContext,
+    error?: Error
+  ) {
+    super(message, status, code, context, error, 'server_error', '[exception] server')
   }
 }
 
@@ -102,6 +131,12 @@ export const errorHandler = (error: Error, _req: Request, res: Response, next: N
 
   logger.error({ error }, 'unhandled error')
 
-  const serverError = new ServerException('internal server error', 500, 'INTERNAL_ERROR')
+  const serverError = new ServerException(
+    'internal server error',
+    'INTERNAL_ERROR',
+    500,
+    undefined,
+    error
+  )
   serverError.getResponse(res)
 }

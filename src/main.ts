@@ -12,21 +12,17 @@ import { setupOpenAPI } from './shared/openapi'
 await startDatabase()
 
 const app = express()
-
-app.use(helmet())
-app.use(cors())
-app.use(cookieParser())
-app.use(express.json())
-app.use(express.urlencoded({ extended: true }))
-
-if (settings.logging.level === 'debug') {
-  app.use(logHttpDebug)
-}
+  .use(helmet())
+  .use(cors())
+  .use(cookieParser())
+  .use(express.json())
+  .use(express.urlencoded({ extended: true }))
+  .use(logHttpDebug())
+  .use(routes)
+  .use(errorHandler)
 
 setupOpenAPI(app)
 
-app.use(routes)
-app.use(errorHandler)
 app.listen(settings.server.port, () => logServerInfo())
 
 for (const sig of ['SIGINT', 'SIGTERM'] as const) {
@@ -35,3 +31,5 @@ for (const sig of ['SIGINT', 'SIGTERM'] as const) {
     process.exit(0)
   })
 }
+
+export default app

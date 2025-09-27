@@ -59,7 +59,7 @@ export async function addItemToCart(cartId: string, productId: string, quantity:
   const { rows: productRows } = await pool.query(productSql, [productId])
 
   if (productRows.length === 0) {
-    throw new AppException('product not found', 404, 'NOT_FOUND', {
+    throw new AppException('product not found', 'NOT_FOUND', 404, {
       operation: 'addItemToCart',
       resource: 'product',
     })

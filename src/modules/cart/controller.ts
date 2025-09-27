@@ -15,7 +15,7 @@ cartRouter.post('/', async (_req, res, next) => {
   }
 })
 
-cartRouter.get('/:id', validate('params', Cart.cartParams), async (req, res, next) => {
+cartRouter.get('/:id', validate({ params: Cart.cartParams }), async (req, res, next) => {
   try {
     const params = req.params as Cart.cartParams
     const cart = await cartService.getCart(params.id)
@@ -27,8 +27,7 @@ cartRouter.get('/:id', validate('params', Cart.cartParams), async (req, res, nex
 
 cartRouter.post(
   '/:id/items',
-  validate('params', Cart.cartParams),
-  validate('body', Cart.addItemBody),
+  validate({ params: Cart.cartParams, body: Cart.addItemBody }),
   async (req, res, next) => {
     try {
       const params = req.params as Cart.cartParams
@@ -43,7 +42,7 @@ cartRouter.post(
 
 cartRouter.delete(
   '/:cartId/items/:productId',
-  validate('params', Cart.cartItemParams),
+  validate({ params: Cart.cartItemParams }),
   async (req, res, next) => {
     try {
       const params = req.params as Cart.cartItemParams
@@ -57,8 +56,7 @@ cartRouter.delete(
 
 cartRouter.patch(
   '/:cartId/items/:productId',
-  validate('params', Cart.cartItemParams),
-  validate('body', Cart.updateQuantityBody),
+  validate({ params: Cart.cartItemParams, body: Cart.updateQuantityBody }),
   async (req, res, next) => {
     try {
       const params = req.params as Cart.cartItemParams
@@ -73,8 +71,7 @@ cartRouter.patch(
 
 cartRouter.post(
   '/:id/coupons',
-  validate('params', Cart.cartParams),
-  validate('body', Cart.applyCouponBody),
+  validate({ params: Cart.cartParams, body: Cart.applyCouponBody }),
   async (req, res, next) => {
     try {
       const params = req.params as Cart.cartParams
@@ -87,7 +84,7 @@ cartRouter.post(
   }
 )
 
-cartRouter.get('/:id/operations', validate('params', Cart.cartParams), async (req, res, next) => {
+cartRouter.get('/:id/operations', validate({ params: Cart.cartParams }), async (req, res, next) => {
   try {
     const params = req.params as Cart.cartParams
     const operations = await cartService.getOperations(params.id)

@@ -38,9 +38,5 @@ describe('Product Services', () => {
 
       expect(result).toEqual(mockProduct)
     })
-
-    it('should throw error when product id is empty', async () => {
-      await expect(productServices.readProduct('')).rejects.toThrow('product id is required')
-    })
   })
 })

@@ -1,4 +1,8 @@
 import { vi } from 'vitest'
+import { extendZodWithOpenApi } from '@asteasolutions/zod-to-openapi'
+import { z } from 'zod'
+
+extendZodWithOpenApi(z)
 
 global.console = {
   ...console,
@@ -45,3 +49,4 @@ vi.mock('../src/shared/database', () => ({
   getClient: vi.fn(),
   query: vi.fn(),
 }))
+

@@ -27,53 +27,55 @@ export const logServerInfo = () => {
   )
 }
 
-export const logHttpDebug = (req: Request, res: Response, next: NextFunction) => {
-  const startTime = performance.now()
+export const logHttpDebug = () => {
+  return (req: Request, res: Response, next: NextFunction) => {
+    const startTime = performance.now()
 
-  const { method, url, body } = req
+    const { method, url, body } = req
 
-  const requestLog: Record<string, unknown> = { method, url }
+    const requestLog: Record<string, unknown> = { method, url }
 
-  if (body !== undefined && body !== null && Object.keys(body).length > 0) {
-    requestLog['body'] = body
-  }
-
-  if (req.params && Object.keys(req.params).length > 0) {
-    requestLog['params'] = req.params
-  }
-
-  if (req.query && Object.keys(req.query).length > 0) {
-    requestLog['query'] = req.query
-  }
-
-  logger.debug(requestLog, 'request')
-
-  const originalSend = res.send
-  let responseLogged = false
-
-  res.send = function (body: unknown) {
-    if (body && !responseLogged) {
-      responseLogged = true
-      const duration = performance.now() - startTime
-
-      let parsedBody = body
-      if (typeof body === 'string') {
-        try {
-          parsedBody = JSON.parse(body)
-        } catch {
-          parsedBody = body
-        }
-      }
-      logger.debug(
-        {
-          body: parsedBody,
-          duration: `${duration.toFixed(2)}ms`,
-        },
-        'response'
-      )
+    if (body !== undefined && body !== null && Object.keys(body).length > 0) {
+      requestLog['body'] = body
     }
-    return originalSend.call(this, body)
-  }
 
-  next()
+    if (req.params && Object.keys(req.params).length > 0) {
+      requestLog['params'] = req.params
+    }
+
+    if (req.query && Object.keys(req.query).length > 0) {
+      requestLog['query'] = req.query
+    }
+
+    logger.debug(requestLog, 'request')
+
+    const originalSend = res.send
+    let responseLogged = false
+
+    res.send = function (body: unknown) {
+      if (body && !responseLogged) {
+        responseLogged = true
+        const duration = performance.now() - startTime
+
+        let parsedBody = body
+        if (typeof body === 'string') {
+          try {
+            parsedBody = JSON.parse(body)
+          } catch {
+            parsedBody = body
+          }
+        }
+        logger.debug(
+          {
+            body: parsedBody,
+            duration: `${duration.toFixed(2)}ms`,
+          },
+          'response'
+        )
+      }
+      return originalSend.call(this, body)
+    }
+
+    next()
+  }
 }

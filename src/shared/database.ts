@@ -9,7 +9,7 @@ function getConfig() {
   const { host, name, user, password } = settings.database
 
   if (!host || !name || !user || !password) {
-    throw new ServerException('missing required database settings', 500, 'MISSING_SETTINGS', {
+    throw new ServerException('missing required database settings', 'MISSING_SETTINGS', 500, {
       operation: 'get_config',
       resource: 'database',
     })
@@ -63,15 +63,10 @@ export async function startDatabase(): Promise<Pool> {
 
 export function getPool(): Pool {
   if (!pool) {
-    throw new ServerException(
-      'connection pool not initialized.',
-      500,
-      'CONNECTION_POOL_NOT_INITIALIZED',
-      {
-        operation: 'get_pool',
-        resource: 'database',
-      }
-    )
+    throw new ServerException('database pool not initialized.', 'POOL_NOT_INITIALIZED', 500, {
+      operation: 'get_pool',
+      resource: 'database',
+    })
   }
   return pool
 }

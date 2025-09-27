@@ -17,7 +17,11 @@ export namespace Product {
   // request
   // -----------------------------------------------------------------------------
 
-  export const readParams = z.object({ id: z.string() }).openapi('ProductReadParams')
+  export const readParams = z
+    .object({
+      id: z.string().regex(/^\d+$/, 'must be a valid number'),
+    })
+    .openapi('ProductReadParams')
   export type readParams = z.infer<typeof readParams>
 
   // response
