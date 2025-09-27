@@ -115,7 +115,7 @@ export class ServerException extends BaseException {
   }
 }
 
-export const errorHandler = (error: Error, _req: Request, res: Response, next: NextFunction) => {
+export const handleError = (error: Error, _req: Request, res: Response, next: NextFunction) => {
   if (res.headersSent) {
     return next(error)
   }

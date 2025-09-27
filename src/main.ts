@@ -5,7 +5,7 @@ import helmet from 'helmet'
 import routes from './routes'
 import { settings } from './settings'
 import { startDatabase, stopDatabase } from './shared/database'
-import { errorHandler } from './shared/exceptions'
+import { handleError } from './shared/exceptions'
 import { logHttpDebug, logServerInfo } from './shared/logging'
 import { setupOpenAPI } from './shared/openapi'
 
@@ -17,9 +17,9 @@ const app = express()
   .use(cookieParser())
   .use(express.json())
   .use(express.urlencoded({ extended: true }))
-  .use(logHttpDebug())
+  .use(logHttpDebug)
   .use(routes)
-  .use(errorHandler)
+  .use(handleError)
 
 setupOpenAPI(app)
 

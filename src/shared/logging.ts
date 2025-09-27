@@ -27,55 +27,43 @@ export const logServerInfo = () => {
   )
 }
 
-export const logHttpDebug = () => {
-  return (req: Request, res: Response, next: NextFunction) => {
-    const startTime = performance.now()
+const logRequest = (req: Request) => {
+  if (settings.logging.level !== 'debug') return
 
-    const { method, url, body } = req
+  const { method, url, body, params, query } = req
 
-    const requestLog: Record<string, unknown> = { method, url }
+  logger.debug({ method, url, body, params, query }, 'request')
+}
 
-    if (body !== undefined && body !== null && Object.keys(body).length > 0) {
-      requestLog['body'] = body
+const logResponse = (body: unknown) => {
+  if (settings.logging.level !== 'debug') return
+  if (!body) return
+
+  let parsedBody = body
+  if (typeof body === 'string') {
+    try {
+      parsedBody = JSON.parse(body)
+    } catch {
+      parsedBody = body
     }
-
-    if (req.params && Object.keys(req.params).length > 0) {
-      requestLog['params'] = req.params
-    }
-
-    if (req.query && Object.keys(req.query).length > 0) {
-      requestLog['query'] = req.query
-    }
-
-    logger.debug(requestLog, 'request')
-
-    const originalSend = res.send
-    let responseLogged = false
-
-    res.send = function (body: unknown) {
-      if (body && !responseLogged) {
-        responseLogged = true
-        const duration = performance.now() - startTime
-
-        let parsedBody = body
-        if (typeof body === 'string') {
-          try {
-            parsedBody = JSON.parse(body)
-          } catch {
-            parsedBody = body
-          }
-        }
-        logger.debug(
-          {
-            body: parsedBody,
-            duration: `${duration.toFixed(2)}ms`,
-          },
-          'response'
-        )
-      }
-      return originalSend.call(this, body)
-    }
-
-    next()
   }
+
+  logger.debug({ body: parsedBody }, 'response')
+}
+
+export const logHttpDebug = (_error: Error, req: Request, res: Response, next: NextFunction) => {
+  logRequest(req)
+
+  const originalSend = res.send
+  let responseLogged = false
+
+  res.send = function (body: unknown) {
+    if (!responseLogged) {
+      responseLogged = true
+      logResponse(body)
+    }
+    return originalSend.call(this, body)
+  }
+
+  next()
 }

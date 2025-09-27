@@ -1,17 +1,17 @@
 import express from 'express'
 import request from 'supertest'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
-import { errorHandler } from '../../shared/exceptions'
+import { handleError } from '../../shared/exceptions'
 import { productRouter } from './controller'
 import * as productServices from './services'
 
 vi.mock('./services')
 const mockServices = vi.mocked(productServices)
 
-const app = express()
-app.use(express.json())
-app.use('/products', productRouter)
-app.use(errorHandler)
+const mockApp = express()
+mockApp.use(express.json())
+mockApp.use('/products', productRouter)
+mockApp.use(handleError)
 
 describe('Product Controller', () => {
   beforeEach(() => {
@@ -26,7 +26,7 @@ describe('Product Controller', () => {
       ]
       mockServices.listProducts.mockResolvedValue(mockProducts)
 
-      const res = await request(app).get('/products')
+      const res = await request(mockApp).get('/products')
 
       expect(res.status).toBe(200)
       expect(res.body).toEqual(mockProducts)
@@ -36,7 +36,7 @@ describe('Product Controller', () => {
     it('should return empty array when no products exist', async () => {
       mockServices.listProducts.mockResolvedValue([])
 
-      const res = await request(app).get('/products')
+      const res = await request(mockApp).get('/products')
 
       expect(res.status).toBe(200)
       expect(res.body).toEqual([])
@@ -53,7 +53,7 @@ describe('Product Controller', () => {
       }
       mockServices.readProduct.mockResolvedValue(mockProduct)
 
-      const res = await request(app).get('/products/123')
+      const res = await request(mockApp).get('/products/123')
 
       expect(res.status).toBe(200)
       expect(res.body).toEqual(mockProduct)
@@ -63,7 +63,7 @@ describe('Product Controller', () => {
     it('should return 404 when product not found', async () => {
       mockServices.readProduct.mockRejectedValue(new Error('product not found'))
 
-      const res = await request(app).get('/products/999')
+      const res = await request(mockApp).get('/products/999')
 
       expect(res.status).toBe(500)
     })
