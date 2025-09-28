@@ -28,15 +28,12 @@ export const logServerInfo = () => {
 }
 
 const logRequest = (req: Request) => {
-  if (settings.logging.level !== 'debug') return
-
   const { method, url, body, params, query } = req
 
   logger.debug({ method, url, body, params, query }, 'request')
 }
 
 const logResponse = (body: unknown) => {
-  if (settings.logging.level !== 'debug') return
   if (!body) return
 
   let parsedBody = body
@@ -51,7 +48,8 @@ const logResponse = (body: unknown) => {
   logger.debug({ body: parsedBody }, 'response')
 }
 
-export const logHttpDebug = (_error: Error, req: Request, res: Response, next: NextFunction) => {
+export const logHttpDebug = (req: Request, res: Response, next: NextFunction) => {
+  if (settings.logging.level !== 'debug') return
   logRequest(req)
 
   const originalSend = res.send
